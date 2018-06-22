@@ -249,6 +249,8 @@ public final class Transmitter: BluetoothManagerDelegate {
                 break
             }
 
+            log.error("Received GlucoseBackfillRxMessage: %{public}@", response.hexadecimalString)
+
             guard let backfillBuffer = backfillBuffer else {
                 log.error("Received GlucoseBackfillRxMessage %{public}@ but backfillBuffer is nil", String(describing: backfillMessage))
                 break
@@ -294,9 +296,11 @@ public final class Transmitter: BluetoothManagerDelegate {
         }
 
         if response[0] == 1 {
-            log.info("Starting new backfill buffer with ID %d", response[1])
+            log.error("Starting new backfill buffer with data %{public}@", response.hexadecimalString)
 
             self.backfillBuffer = GlucoseBackfillFrameBuffer(identifier: response[1])
+        } else {
+            log.error("Appending to backfill buffer with data %{public}@", response.hexadecimalString)
         }
 
         self.backfillBuffer?.append(response)
